@@ -1,0 +1,62 @@
+name: iOS build
+
+# Builds an unsigned .ipa on a macOS runner and attaches it to the GitHub release.
+# Unsigned: it must be re-signed (e.g. Sideloadly/AltStore with an Apple ID, or an
+# Apple Developer account) before it installs on an iPhone.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ios:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: ios-app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Create Capacitor iOS project
+        run: |
+          npm install --no-audit --no-fund
+          npx cap add ios
+          npx cap sync ios
+
+      - name: Set app icon
+        run: |
+          set -e
+          ICONSET=ios/App/App/Assets.xcassets/AppIcon.appiconset
+          ls "$ICONSET"
+          for f in "$ICONSET"/*.png; do cp assets/AppIcon-1024.png "$f"; done
+
+      - name: Build unsigned app
+        run: |
+          set -e
+          cd ios/App
+          if [ -d App.xcworkspace ]; then TARGET="-workspace App.xcworkspace"; else TARGET="-project App.xcodeproj"; fi
+          xcodebuild $TARGET -scheme App -configuration Release -sdk iphoneos \
+            -destination 'generic/platform=iOS' -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/App.app Payload/
+          zip -qry ../../OurSociety-unsigned.ipa Payload
+          ls -la ../../OurSociety-unsigned.ipa
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OurSociety-ios
+          path: ios-app/OurSociety-unsigned.ipa
+
+      - name: Attach to release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" OurSociety-unsigned.ipa --clobber

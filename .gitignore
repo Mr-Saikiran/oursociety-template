@@ -1,0 +1,35 @@
+# v0 sandbox internal files
+__v0_runtime_loader.js
+__v0_devtools.tsx
+__v0_jsx-dev-runtime.ts
+.snowflake/
+.v0-trash/
+.vercel/
+
+# Environment variables
+.env*.local
+
+# Common ignores
+node_modules
+.next/
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+
+.vercel
+.env*
+!.env.example
+
+# Android (Bubblewrap) signing secrets and build outputs
+android/
+*.apk
+*.aab
+*.idsig
+*.keystore
+
+# iOS build outputs
+ios-app/node_modules/
+ios-app/ios/
+
+# Local member store (dev only)
+.data/
