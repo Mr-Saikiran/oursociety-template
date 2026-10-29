@@ -115,87 +115,107 @@ export function AccountingView({ entries }: { entries: LedgerEntry[] }) {
     .sort((a, b) => b.date.localeCompare(a.date))
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="grid gap-3 sm:grid-cols-3">
-        <Card><CardContent className="flex items-center gap-3 p-4">
-          <ArrowDownLeft className="size-5 text-primary" aria-hidden />
-          <div><p className="text-xl font-semibold">{money(income)}</p><p className="text-sm text-muted-foreground">Total income</p></div>
-        </CardContent></Card>
-        <Card><CardContent className="flex items-center gap-3 p-4">
-          <ArrowUpRight className="size-5 text-destructive" aria-hidden />
-          <div><p className="text-xl font-semibold">{money(expense)}</p><p className="text-sm text-muted-foreground">Total expenses</p></div>
-        </CardContent></Card>
-        <Card><CardContent className="flex items-center gap-3 p-4">
-          <Scale className="size-5 text-muted-foreground" aria-hidden />
-          <div><p className="text-xl font-semibold">{money(income - expense)}</p><p className="text-sm text-muted-foreground">Net surplus</p></div>
-        </CardContent></Card>
-      </div>
-
-      <Card>
-        <CardContent className="flex flex-col gap-3 p-5">
-          <p className="font-medium">Expenses by category</p>
-          {byCategory.map(([cat, amt]) => (
-            <div key={cat} className="flex flex-col gap-1">
-              <div className="flex justify-between text-sm"><span>{cat}</span><span className="text-muted-foreground">{money(amt)}</span></div>
-              <div className="h-2 rounded-full bg-muted"><div className="h-2 rounded-full bg-primary" style={{ width: `${(amt / byCategory[0][1]) * 100}%` }} /></div>
-            </div>
-          ))}
+    <div className="flex flex-col gap-6">
+      {/* Key figures: one card, parted by hairlines */}
+      <Card className="py-0">
+        <CardContent className="grid p-0 sm:grid-cols-3">
+          <div className="flex flex-col gap-1 p-5 lg:p-6">
+            <p className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground">
+              <ArrowDownLeft className="size-4 text-primary" aria-hidden />
+              Total income
+            </p>
+            <p className="tabular text-3xl font-extrabold tracking-tight text-primary lg:text-4xl">{money(income)}</p>
+          </div>
+          <div className="flex flex-col gap-1 border-t border-border p-5 sm:border-t-0 sm:border-l lg:p-6">
+            <p className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground">
+              <ArrowUpRight className="size-4 text-destructive" aria-hidden />
+              Total expenses
+            </p>
+            <p className="tabular text-3xl font-extrabold tracking-tight text-foreground lg:text-4xl">{money(expense)}</p>
+          </div>
+          <div className="flex flex-col gap-1 border-t border-border p-5 sm:border-t-0 sm:border-l lg:p-6">
+            <p className="flex items-center gap-1.5 text-sm font-semibold text-muted-foreground">
+              <Scale className="size-4" aria-hidden />
+              Net surplus
+            </p>
+            <p className="tabular text-3xl font-extrabold tracking-tight text-foreground lg:text-4xl">{money(income - expense)}</p>
+          </div>
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between gap-3">
-        <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
-          <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="income">Income</TabsTrigger>
-            <TabsTrigger value="expense">Expenses</TabsTrigger>
-          </TabsList>
-        </Tabs>
-        {canEdit ? <AddEntry /> : <ReadOnlyNote action="add ledger entries" />}
-      </div>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+        <div className="flex min-w-0 flex-col gap-4 lg:order-1">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
+              <TabsList>
+                <TabsTrigger value="all">All</TabsTrigger>
+                <TabsTrigger value="income">Income</TabsTrigger>
+                <TabsTrigger value="expense">Expenses</TabsTrigger>
+              </TabsList>
+            </Tabs>
+            {canEdit ? <AddEntry /> : <ReadOnlyNote action="add ledger entries" />}
+          </div>
 
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead className="hidden sm:table-cell">Category</TableHead>
-                <TableHead className="hidden sm:table-cell">Mode</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-                {canEdit && <TableHead className="w-10"><span className="sr-only">Delete</span></TableHead>}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {shown.map((e) => (
-                <TableRow key={e.id}>
-                  <TableCell className="whitespace-nowrap text-muted-foreground">{fmt(e.date)}</TableCell>
-                  <TableCell className="font-medium">{e.description}</TableCell>
-                  <TableCell className="hidden sm:table-cell"><Badge variant="secondary">{e.category}</Badge></TableCell>
-                  <TableCell className="hidden sm:table-cell text-muted-foreground">{e.mode}</TableCell>
-                  <TableCell className={`text-right font-medium ${e.type === 'income' ? 'text-primary' : ''}`}>
-                    {e.type === 'income' ? '+' : '−'}{money(e.amount)}
-                  </TableCell>
-                  {canEdit && (
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={`Delete entry: ${e.description}`}
-                        disabled={pending}
-                        onClick={() => confirm(`Delete "${e.description}"?`) && run(() => deleteLedgerEntry(e.id))}
-                      >
-                        <Trash2 />
-                      </Button>
-                    </TableCell>
-                  )}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+          <Card>
+            <CardContent className="p-2 sm:p-3">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead className="hidden sm:table-cell">Category</TableHead>
+                    <TableHead className="hidden sm:table-cell">Mode</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                    {canEdit && <TableHead className="w-10"><span className="sr-only">Delete</span></TableHead>}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {shown.map((e) => (
+                    <TableRow key={e.id} className="focus-within:bg-muted">
+                      <TableCell className="tabular whitespace-nowrap font-semibold text-muted-foreground">{fmt(e.date)}</TableCell>
+                      <TableCell className="font-bold">{e.description}</TableCell>
+                      <TableCell className="hidden sm:table-cell"><Badge variant={e.type === 'income' ? 'mint' : 'sky'}>{e.category}</Badge></TableCell>
+                      <TableCell className="hidden sm:table-cell text-muted-foreground">{e.mode}</TableCell>
+                      <TableCell className={`tabular whitespace-nowrap text-right text-base font-extrabold ${e.type === 'income' ? 'text-primary' : 'text-foreground'}`}>
+                        {e.type === 'income' ? '+' : '−'}{money(e.amount)}
+                      </TableCell>
+                      {canEdit && (
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            className="focus-visible:ring-ring"
+                            aria-label={`Delete entry: ${e.description}`}
+                            disabled={pending}
+                            onClick={() => confirm(`Delete "${e.description}"?`) && run(() => deleteLedgerEntry(e.id))}
+                          >
+                            <Trash2 />
+                          </Button>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card className="h-fit lg:order-2">
+          <CardContent className="flex flex-col gap-4 p-5 sm:p-6">
+            <p className="text-xl font-extrabold tracking-tight">Expenses by category</p>
+            {byCategory.map(([cat, amt]) => (
+              <div key={cat} className="flex flex-col gap-1.5">
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="font-semibold">{cat}</span>
+                  <span className="tabular font-extrabold">{money(amt)}</span>
+                </div>
+                <div className="h-2.5 rounded-full bg-muted"><div className="h-2.5 rounded-full bg-primary" style={{ width: `${(amt / byCategory[0][1]) * 100}%` }} /></div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

@@ -10,18 +10,18 @@ export function ReadOnlyNote({ action }: { action: string }) {
   const pathname = usePathname()
   if (STATIC_DEMO) {
     return (
-      <p className="flex items-center gap-2 rounded-lg border border-dashed px-3 py-2 text-sm text-muted-foreground">
+      <p className="flex items-center gap-2 rounded-full bg-tone-sun px-4 py-2 text-sm font-semibold text-tone-sun-ink">
         <Lock className="size-3.5 shrink-0" aria-hidden />
         <span>Read-only demo. Deploy your own copy to {action}.</span>
       </p>
     )
   }
   return (
-    <p className="flex items-center gap-2 rounded-lg border border-dashed px-3 py-2 text-sm text-muted-foreground">
+    <p className="flex items-center gap-2 rounded-full bg-tone-sun px-4 py-2 text-sm font-semibold text-tone-sun-ink">
       <Lock className="size-3.5 shrink-0" aria-hidden />
       <span>
         Read-only.{' '}
-        <Link href={`/login?next=${encodeURIComponent(pathname)}`} className="font-medium text-primary underline-offset-4 hover:underline">
+        <Link href={`/login?next=${encodeURIComponent(pathname)}`} className="font-bold text-tone-sun-ink underline underline-offset-4 hover:no-underline">
           Sign in
         </Link>{' '}
         to {action}.

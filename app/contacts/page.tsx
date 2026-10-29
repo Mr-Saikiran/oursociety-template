@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div>
+    <div className="mx-auto max-w-6xl">
       <PageHeader title="Handy Contacts" description="Society contacts you can call directly, without saving them on your phone." />
       <ContactsView />
     </div>

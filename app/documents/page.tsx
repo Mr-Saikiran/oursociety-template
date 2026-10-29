@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div>
+    <div className="mx-auto max-w-6xl">
       <PageHeader title="Document Library" description="Byelaws, minutes, financial statements, forms and certificates in one place." />
       <DocumentsView />
     </div>

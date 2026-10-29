@@ -3,7 +3,6 @@
 import { useActionState, useEffect, useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { Loader2, Trash2, UserPlus } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -39,8 +38,7 @@ export function MembersTable({ members, meId }: { members: PublicUser[]; meId: s
   }
 
   return (
-    <Card>
-      <CardContent className="p-0">
+    <div className="overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -57,8 +55,8 @@ export function MembersTable({ members, meId }: { members: PublicUser[]; meId: s
               return (
                 <TableRow key={m.id}>
                   <TableCell>
-                    <p className="font-medium">{m.name} {isMe && <Badge variant="secondary" className="ml-1">You</Badge>}</p>
-                    <p className="text-xs text-muted-foreground sm:hidden">{m.email}</p>
+                    <p className="flex flex-wrap items-center gap-2 text-[0.9375rem] font-bold">{m.name} {isMe && <Badge variant="mint">You</Badge>}</p>
+                    <p className="text-sm text-muted-foreground sm:hidden">{m.email}</p>
                   </TableCell>
                   <TableCell className="hidden text-muted-foreground sm:table-cell">{m.email}</TableCell>
                   <TableCell>
@@ -68,7 +66,7 @@ export function MembersTable({ members, meId }: { members: PublicUser[]; meId: s
                       disabled={isMe || busy}
                       onValueChange={(v) => run(m.id, () => updateRole(m.id, v as Role))}
                     >
-                      <SelectTrigger size="sm" className="w-28" aria-label={`Role for ${m.name}`}>
+                      <SelectTrigger size="sm" className="w-32" aria-label={`Role for ${m.name}`}>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -81,13 +79,14 @@ export function MembersTable({ members, meId }: { members: PublicUser[]; meId: s
                       <Button
                         variant="ghost"
                         size="icon"
+                        className="text-muted-foreground hover:text-destructive"
                         aria-label={`Remove ${m.name}`}
                         disabled={busy}
                         onClick={() => {
                           if (confirm(`Remove ${m.name}? They will no longer be able to sign in.`)) run(m.id, () => removeMember(m.id))
                         }}
                       >
-                        {busy ? <Loader2 className="animate-spin" /> : <Trash2 />}
+                        {busy ? <Loader2 className="animate-spin motion-reduce:animate-none" /> : <Trash2 />}
                       </Button>
                     )}
                   </TableCell>
@@ -96,8 +95,7 @@ export function MembersTable({ members, meId }: { members: PublicUser[]; meId: s
             })}
           </TableBody>
         </Table>
-      </CardContent>
-    </Card>
+    </div>
   )
 }
 
@@ -114,14 +112,16 @@ export function AddMemberForm() {
   }, [state])
 
   return (
-    <Card>
-      <CardContent className="p-5">
-        <form ref={formRef} action={action} className="flex flex-col gap-4">
-          <p className="flex items-center gap-2 font-medium"><UserPlus className="size-4" /> Add a member</p>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="flex flex-col gap-1.5"><Label htmlFor="m-name">Name</Label><Input id="m-name" name="name" required /></div>
-            <div className="flex flex-col gap-1.5"><Label htmlFor="m-email">Email</Label><Input id="m-email" name="email" type="email" required /></div>
-            <div className="flex flex-col gap-1.5">
+    <div className="rounded-3xl bg-muted p-5 sm:p-6">
+        <form ref={formRef} action={action} className="flex flex-col gap-5">
+          <p className="flex items-center gap-3 text-lg font-bold">
+            <span className="flex size-10 items-center justify-center rounded-full bg-tone-mint text-tone-mint-ink" aria-hidden><UserPlus className="size-5" /></span>
+            Add a member
+          </p>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div className="flex flex-col gap-2"><Label htmlFor="m-name">Name</Label><Input id="m-name" name="name" required /></div>
+            <div className="flex flex-col gap-2"><Label htmlFor="m-email">Email</Label><Input id="m-email" name="email" type="email" required /></div>
+            <div className="flex flex-col gap-2">
               <Label>Role</Label>
               <input type="hidden" name="role" value={role} />
               <Select items={roleItems} value={role} onValueChange={(v) => setRole(v as Role)}>
@@ -129,22 +129,21 @@ export function AddMemberForm() {
                 <SelectContent>{roleItems.map((r) => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="m-password">Temporary password</Label>
               <Input id="m-password" name="password" type="password" minLength={8} required autoComplete="new-password" />
             </div>
           </div>
-          <p className="text-xs text-muted-foreground">Share the temporary password with them privately. They can change it in Settings after signing in.</p>
-          {state?.error && <p role="alert" className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">{state.error}</p>}
+          <p className="max-w-prose text-sm leading-relaxed text-muted-foreground">Share the temporary password with them privately. They can change it in Settings after signing in.</p>
+          {state?.error && <p role="alert" className="rounded-2xl bg-tone-coral px-4 py-3 text-sm font-semibold text-tone-coral-ink">{state.error}</p>}
           <div>
-            <Button type="submit" disabled={pending}>
-              {pending && <Loader2 className="animate-spin" data-icon="inline-start" />}
+            <Button type="submit" className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring" disabled={pending}>
+              {pending && <Loader2 className="animate-spin motion-reduce:animate-none" data-icon="inline-start" />}
               Add member
             </Button>
           </div>
         </form>
-      </CardContent>
-    </Card>
+    </div>
   )
 }
 
@@ -157,21 +156,19 @@ export function ChangePasswordForm() {
   }, [state])
 
   return (
-    <Card>
-      <CardContent className="p-5">
-        <form ref={formRef} action={action} className="flex flex-col gap-4 sm:max-w-sm">
-          <p className="font-medium">Change password</p>
-          <div className="flex flex-col gap-1.5"><Label htmlFor="pw-current">Current password</Label><Input id="pw-current" name="current" type="password" required autoComplete="current-password" /></div>
-          <div className="flex flex-col gap-1.5"><Label htmlFor="pw-next">New password</Label><Input id="pw-next" name="next" type="password" minLength={8} required autoComplete="new-password" /></div>
-          {state?.error && <p role="alert" className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">{state.error}</p>}
+    <div className="rounded-3xl bg-muted p-5 sm:p-6">
+        <form ref={formRef} action={action} className="flex flex-col gap-5 sm:max-w-sm">
+          <p className="text-lg font-bold">Change password</p>
+          <div className="flex flex-col gap-2"><Label htmlFor="pw-current">Current password</Label><Input id="pw-current" name="current" type="password" required autoComplete="current-password" /></div>
+          <div className="flex flex-col gap-2"><Label htmlFor="pw-next">New password</Label><Input id="pw-next" name="next" type="password" minLength={8} required autoComplete="new-password" /></div>
+          {state?.error && <p role="alert" className="rounded-2xl bg-tone-coral px-4 py-3 text-sm font-semibold text-tone-coral-ink">{state.error}</p>}
           <div>
-            <Button type="submit" variant="outline" disabled={pending}>
-              {pending && <Loader2 className="animate-spin" data-icon="inline-start" />}
+            <Button type="submit" variant="outline" className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring" disabled={pending}>
+              {pending && <Loader2 className="animate-spin motion-reduce:animate-none" data-icon="inline-start" />}
               Update password
             </Button>
           </div>
         </form>
-      </CardContent>
-    </Card>
+    </div>
   )
 }

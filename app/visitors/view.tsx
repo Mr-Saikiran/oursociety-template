@@ -24,12 +24,18 @@ const statusLabel: Record<Visitor['status'], string> = {
   exited: 'Exited',
   denied: 'Denied',
 }
-const statusVariant: Record<Visitor['status'], 'default' | 'secondary' | 'outline' | 'destructive'> = {
-  pending: 'default',
-  approved: 'secondary',
-  inside: 'secondary',
+const statusVariant: Record<Visitor['status'], 'sun' | 'mint' | 'sky' | 'outline' | 'coral'> = {
+  pending: 'sun',
+  approved: 'mint',
+  inside: 'sky',
   exited: 'outline',
-  denied: 'destructive',
+  denied: 'coral',
+}
+const statusInk: Record<'pending' | 'approved' | 'inside' | 'exited', string> = {
+  pending: 'text-tone-sun-ink',
+  approved: 'text-tone-mint-ink',
+  inside: 'text-tone-sky-ink',
+  exited: 'text-muted-foreground',
 }
 const purposes: Visitor['purpose'][] = ['Guest', 'Delivery', 'Service', 'Cab', 'Contractor']
 
@@ -99,50 +105,65 @@ export function VisitorsView({ items }: { items: Visitor[] }) {
   const count = (s: Visitor['status']) => items.filter((v) => v.status === s).length
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {(['pending', 'approved', 'inside', 'exited'] as const).map((s) => (
-          <Card key={s}><CardContent className="p-4">
-            <p className="text-2xl font-semibold">{count(s)}</p>
-            <p className="text-sm text-muted-foreground">{statusLabel[s]}</p>
-          </CardContent></Card>
-        ))}
-      </div>
+    <div className="flex flex-col gap-6">
+      <Card className="py-0">
+        <CardContent className="grid grid-cols-2 p-0 sm:grid-cols-4">
+          {(['pending', 'approved', 'inside', 'exited'] as const).map((s, i) => (
+            <div
+              key={s}
+              className={`flex flex-col gap-1 p-5 lg:p-6 ${i % 2 === 1 ? 'border-l border-border' : ''} ${i > 1 ? 'border-t border-border sm:border-t-0 sm:border-l' : ''}`}
+            >
+              <p className={`tabular text-3xl font-extrabold tracking-tight lg:text-4xl ${statusInk[s]}`}>{count(s)}</p>
+              <p className="text-sm font-semibold text-muted-foreground">{statusLabel[s]}</p>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
 
       <div className="flex justify-end">
         {canEdit ? <PreApprove /> : <ReadOnlyNote action="approve or check in visitors" />}
       </div>
 
-      <div className="flex flex-col gap-3">
-        {items.map((v) => (
-          <Card key={v.id}>
-            <CardContent className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
-              <div className="min-w-0">
-                <div className="mb-1.5 flex flex-wrap items-center gap-2">
-                  <Badge variant="secondary">{v.purpose}</Badge>
-                  <Badge variant={statusVariant[v.status]}>{statusLabel[v.status]}</Badge>
+      <Card>
+        <CardContent>
+          <ul className="divide-y divide-border">
+            {items.map((v) => (
+              <li key={v.id} className="flex flex-col gap-4 py-5 first:pt-1 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex min-w-0 items-start gap-4">
+                  <span
+                    aria-hidden
+                    className="flex size-12 shrink-0 items-center justify-center rounded-full bg-muted text-base font-extrabold text-muted-foreground"
+                  >
+                    {v.name.split(' ').slice(0, 2).map((n) => n[0]).join('')}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-lg font-bold leading-snug">{v.name}</p>
+                      <Badge variant={statusVariant[v.status]}>{statusLabel[v.status]}</Badge>
+                      <Badge variant="secondary">{v.purpose}</Badge>
+                    </div>
+                    <div className="mt-1.5 flex flex-wrap gap-x-5 gap-y-1 text-[0.9375rem] text-muted-foreground">
+                      <span className="flex items-center gap-1.5"><MapPin className="size-4" aria-hidden />{v.visiting}, {v.resident}</span>
+                      <span className="tabular flex items-center gap-1.5"><Clock className="size-4" aria-hidden />{v.expectedAt}</span>
+                      <span className="tabular flex items-center gap-1.5"><Phone className="size-4" aria-hidden />{v.phone}</span>
+                    </div>
+                  </div>
                 </div>
-                <p className="font-medium">{v.name}</p>
-                <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1.5"><MapPin className="size-3.5" aria-hidden />{v.visiting} · {v.resident}</span>
-                  <span className="flex items-center gap-1.5"><Clock className="size-3.5" aria-hidden />{v.expectedAt}</span>
-                  <span className="flex items-center gap-1.5"><Phone className="size-3.5" aria-hidden />{v.phone}</span>
+                <div className="flex shrink-0 gap-2 sm:pl-0 pl-16">
+                  {canEdit && v.status === 'pending' && (
+                    <>
+                      <Button className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring" disabled={pending} onClick={() => setStatus(v.id, 'approved')}>Approve</Button>
+                      <Button className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring" disabled={pending} variant="outline" onClick={() => setStatus(v.id, 'denied')}>Deny</Button>
+                    </>
+                  )}
+                  {canEdit && v.status === 'approved' && <Button className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring" disabled={pending} variant="outline" onClick={() => setStatus(v.id, 'inside')}>Check in</Button>}
+                  {canEdit && v.status === 'inside' && <Button className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring" disabled={pending} variant="outline" onClick={() => setStatus(v.id, 'exited')}>Check out</Button>}
                 </div>
-              </div>
-              <div className="flex shrink-0 gap-2">
-                {canEdit && v.status === 'pending' && (
-                  <>
-                    <Button size="sm" disabled={pending} onClick={() => setStatus(v.id, 'approved')}>Approve</Button>
-                    <Button size="sm" disabled={pending} variant="outline" onClick={() => setStatus(v.id, 'denied')}>Deny</Button>
-                  </>
-                )}
-                {canEdit && v.status === 'approved' && <Button size="sm" disabled={pending} variant="outline" onClick={() => setStatus(v.id, 'inside')}>Check in</Button>}
-                {canEdit && v.status === 'inside' && <Button size="sm" disabled={pending} variant="outline" onClick={() => setStatus(v.id, 'exited')}>Check out</Button>}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
     </div>
   )
 }
