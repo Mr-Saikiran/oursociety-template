@@ -4,6 +4,8 @@ A free, open-source app for housing societies, resident welfare associations and
 
 It runs as a website, and it installs on Android and iPhone from the same code.
 
+**Live demo:** [techswitch.in/oursociety](https://techswitch.in/oursociety/). It is read-only and shows the fictional demo data.
+
 ## Features
 
 | Area | What it does |
@@ -58,6 +60,16 @@ npm run dev
 ```
 
 Open http://localhost:3000. On your computer, the app stores data in `.data/*.json`, and the setup code is `dev-setup`. To start again from the seed data, delete the `.data` folder.
+
+## Static read-only demo
+
+To show the app on any static host, such as GitHub Pages, Cloudflare or an existing website, export a read-only copy of the seed data:
+
+```bash
+npm run build:static -- --base /oursociety
+```
+
+This writes plain HTML, CSS and JavaScript to `out/`. Upload the files to the `/oursociety/` folder of your site. To serve the demo from the root of a domain, leave out `--base`. The static demo has no sign-in or database, so the edit controls are replaced by a read-only notice.
 
 ## Mobile apps
 

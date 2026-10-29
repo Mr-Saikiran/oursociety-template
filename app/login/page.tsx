@@ -4,10 +4,13 @@ import { getCurrentUser } from '@/lib/auth'
 import { readUsers } from '@/lib/users'
 import { LoginForm, SetupForm } from './forms'
 import { society } from '@/lib/data'
+import { STATIC_DEMO } from '@/lib/static'
+import { DemoNotice } from '@/components/demo-notice'
 
 export const metadata: Metadata = { title: 'Sign in' }
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
+  if (STATIC_DEMO) return <DemoNotice />
   if (await getCurrentUser()) redirect('/')
   const { next } = await searchParams
   const needsSetup = (await readUsers()).length === 0

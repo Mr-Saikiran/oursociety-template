@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useSession } from '@/components/session-provider'
 import { logout } from '@/app/actions/auth'
+import { STATIC_DEMO } from '@/lib/static'
 
 const initials = (name: string) =>
   name.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]!.toUpperCase()).join('')
@@ -23,6 +24,12 @@ export function UserMenu() {
   const user = useSession()
   const router = useRouter()
   const pathname = usePathname()
+
+  if (STATIC_DEMO) {
+    return (
+      <span className="ml-1 rounded-full border px-2.5 py-1 text-xs font-medium text-muted-foreground">Read-only demo</span>
+    )
+  }
 
   if (!user) {
     return (

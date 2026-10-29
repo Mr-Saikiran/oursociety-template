@@ -8,6 +8,7 @@ import { SessionProvider } from '@/components/session-provider'
 import { getCurrentUser } from '@/lib/auth'
 import { all } from '@/lib/repo'
 import { society } from '@/society/config'
+import { asset, STATIC_DEMO } from '@/lib/static'
 import './globals.css'
 
 const manrope = Manrope({
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   applicationName: society.appName,
   description: `${society.appName}: community app for ${society.name} (${society.acronym}), ${society.location}. Maintenance, finances, committees, meetings, amenities and resident requests.`,
   generator: 'v0.app',
-  manifest: '/manifest.webmanifest',
+  manifest: asset('/manifest.webmanifest'),
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -65,7 +66,7 @@ export default async function RootLayout({
           </SessionProvider>
           <Toaster position="top-center" />
         </ThemeProvider>
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        {process.env.NODE_ENV === 'production' && !STATIC_DEMO && <Analytics />}
       </body>
     </html>
   )

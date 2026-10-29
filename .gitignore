@@ -33,3 +33,5 @@ ios-app/ios/
 
 # Local member store (dev only)
 .data/
+.static-aside/
+out/

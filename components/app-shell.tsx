@@ -16,6 +16,7 @@ import { UserMenu } from '@/components/user-menu'
 import { useSession } from '@/components/session-provider'
 import type { LiveData } from '@/lib/live'
 import { society } from '@/society/config'
+import { asset, STATIC_DEMO } from '@/lib/static'
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
@@ -61,7 +62,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 function Brand({ compact }: { compact?: boolean }) {
   return (
     <div className="flex items-center gap-3">
-      <Image src={society.logo} alt="" width={40} height={40} className="size-10 shrink-0 rounded-xl" priority />
+      <Image src={asset(society.logo)} alt="" width={40} height={40} className="size-10 shrink-0 rounded-xl" priority />
       {!compact && (
         <div className="min-w-0 leading-tight">
           <p className="truncate text-base font-bold tracking-tight text-sidebar-foreground">{society.appName}</p>
@@ -95,8 +96,10 @@ function SidebarFooter() {
   }
   return (
     <div className="rounded-xl border border-sidebar-border bg-sidebar-accent/40 p-3 text-xs text-sidebar-foreground/70">
-      <p className="font-medium text-sidebar-foreground">Read-only view</p>
-      <p className="mt-1">Committee members can sign in to make changes.</p>
+      <p className="font-medium text-sidebar-foreground">{STATIC_DEMO ? 'Read-only demo' : 'Read-only view'}</p>
+      <p className="mt-1">
+        {STATIC_DEMO ? 'Sample data for a made-up community.' : 'Committee members can sign in to make changes.'}
+      </p>
     </div>
   )
 }
@@ -147,7 +150,7 @@ export function AppShell({ children, live }: { children: React.ReactNode; live: 
           </div>
 
           <div className="flex min-w-0 items-center gap-2.5 lg:hidden">
-            <Image src={society.logo} alt="" width={32} height={32} className="size-8 shrink-0 rounded-lg" />
+            <Image src={asset(society.logo)} alt="" width={32} height={32} className="size-8 shrink-0 rounded-lg" />
             <span className="truncate text-base font-bold tracking-tight">{society.appName}</span>
           </div>
 

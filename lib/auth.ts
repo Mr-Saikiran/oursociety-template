@@ -3,6 +3,7 @@ import { createHmac, randomBytes, scrypt as scryptCb, timingSafeEqual } from 'cr
 import { promisify } from 'util'
 import { cookies } from 'next/headers'
 import { readUsers, toPublic, type PublicUser } from './users'
+import { STATIC_DEMO } from './static'
 
 const scrypt = promisify(scryptCb) as (pw: string, salt: Buffer, len: number) => Promise<Buffer>
 
@@ -58,6 +59,7 @@ export async function destroySession() {
 
 /** The signed-in member, re-read from the store so removed members lose access at once. */
 export async function getCurrentUser(): Promise<PublicUser | null> {
+  if (STATIC_DEMO) return null
   const raw = (await cookies()).get(SESSION_COOKIE)?.value
   if (!raw) return null
   const [payload, sig] = raw.split('.')

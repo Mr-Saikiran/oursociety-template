@@ -3,11 +3,14 @@ import { redirect } from 'next/navigation'
 import { PageHeader } from '@/components/page-header'
 import { getCurrentUser } from '@/lib/auth'
 import { readUsers, toPublic } from '@/lib/users'
+import { STATIC_DEMO } from '@/lib/static'
+import { DemoNotice } from '@/components/demo-notice'
 import { AddMemberForm, ChangePasswordForm, MembersTable } from './settings-view'
 
 export const metadata: Metadata = { title: 'Settings' }
 
 export default async function SettingsPage() {
+  if (STATIC_DEMO) return <DemoNotice />
   const me = await getCurrentUser()
   if (!me) redirect('/login?next=/settings')
   const members = me.role === 'admin' ? (await readUsers()).map(toPublic) : []
