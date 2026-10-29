@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default async function Page() {
   const entries = await all('ledger')
   return (
-    <div>
+    <div className="mx-auto max-w-6xl">
       <PageHeader title="Accounting" description="Society income, expenses and ledger, from billing to year-end statements." />
       <AccountingView entries={entries} />
     </div>

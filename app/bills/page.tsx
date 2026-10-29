@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default async function Page() {
   const [records, runs] = await Promise.all([all('maintenance'), all('bills')])
   return (
-    <div>
+    <div className="mx-auto max-w-6xl">
       <PageHeader title="Maintenance Bills" description="Generate bills for any billing frequency and send them to members by SMS or email." />
       <BillsView records={records} runs={runs} />
     </div>

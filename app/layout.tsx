@@ -1,6 +1,6 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Manrope } from 'next/font/google'
+import { Nunito } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from '@/components/ui/sonner'
 import { AppShell } from '@/components/app-shell'
@@ -11,9 +11,9 @@ import { society } from '@/society/config'
 import { asset, STATIC_DEMO } from '@/lib/static'
 import './globals.css'
 
-const manrope = Manrope({
+const nunito = Nunito({
   subsets: ['latin'],
-  variable: '--font-manrope',
+  variable: '--font-nunito',
   display: 'swap',
 })
 
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   colorScheme: 'light dark',
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f7f6f0' },
+    { media: '(prefers-color-scheme: light)', color: '#f8f4e8' },
     { media: '(prefers-color-scheme: dark)', color: '#0f1c1c' },
   ],
   width: 'device-width',
@@ -58,9 +58,9 @@ export default async function RootLayout({
   return (
     <html lang="en" className="bg-background" suppressHydrationWarning>
       <body
-        className={`${manrope.variable} font-sans antialiased`}
+        className={`${nunito.variable} font-sans antialiased`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute={["class", "data-theme"]} defaultTheme="system" enableSystem disableTransitionOnChange>
           <SessionProvider user={user}>
             <AppShell live={{ notices, requests, maintenance }}>{children}</AppShell>
           </SessionProvider>

@@ -21,10 +21,10 @@ import { asset, STATIC_DEMO } from '@/lib/static'
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
   return (
-    <nav className="flex flex-col gap-5">
+    <nav className="flex flex-col gap-6">
       {navGroups.map((group) => (
         <div key={group} className="flex flex-col gap-0.5">
-          <p className="px-3 pb-1.5 text-[11px] font-semibold tracking-wider text-sidebar-foreground/45 uppercase">
+          <p className="px-3.5 pb-1.5 text-sm font-bold text-sidebar-foreground/65">
             {group}
           </p>
           {navItems
@@ -39,16 +39,13 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
                   onClick={onNavigate}
                   aria-current={active ? 'page' : undefined}
                   className={cn(
-                    'group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                    'group relative flex items-center gap-3 rounded-full px-3.5 py-2.5 text-[0.9375rem] font-bold transition-colors duration-120 ease-out',
                     active
-                      ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                      : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground',
+                      ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-[0_3px_0_var(--primary-edge)]'
+                      : 'text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-foreground',
                   )}
                 >
-                  {active && (
-                    <span className="absolute top-1/2 left-0 h-5 w-1 -translate-y-1/2 rounded-r-full bg-sidebar-primary" aria-hidden />
-                  )}
-                  <Icon className={cn('size-[18px] shrink-0', active && 'text-sidebar-primary')} />
+                  <Icon className={cn('size-5 shrink-0', active ? 'text-accent' : 'text-primary')} />
                   <span className="truncate">{item.label}</span>
                 </Link>
               )
@@ -62,12 +59,12 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 function Brand({ compact }: { compact?: boolean }) {
   return (
     <div className="flex items-center gap-3">
-      <Image src={asset(society.logo)} alt="" width={40} height={40} className="size-10 shrink-0 rounded-xl" priority />
+      <Image src={asset(society.logo)} alt="" width={44} height={44} className="size-11 shrink-0 rounded-2xl" priority />
       {!compact && (
         <div className="min-w-0 leading-tight">
-          <p className="truncate text-base font-bold tracking-tight text-sidebar-foreground">{society.appName}</p>
-          <p className="truncate text-xs text-sidebar-foreground/60">
-            {society.shortName} · Reg {society.regNo}
+          <p className="truncate text-lg font-extrabold tracking-tight text-sidebar-foreground">{society.appName}</p>
+          <p className="truncate text-xs text-sidebar-foreground/70">
+            {society.shortName}, Reg {society.regNo}
           </p>
         </div>
       )}
@@ -83,20 +80,20 @@ function SidebarFooter() {
       <Link
         href="/settings"
         className={cn(
-          'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+          'flex items-center gap-3 rounded-full px-3.5 py-2.5 text-[0.9375rem] font-bold transition-colors duration-120 ease-out',
           pathname === '/settings'
-            ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-            : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground',
+            ? 'bg-sidebar-primary text-sidebar-primary-foreground'
+            : 'text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-foreground',
         )}
       >
-        <Settings className="size-[18px] shrink-0" />
+        <Settings className="size-5 shrink-0 text-primary" />
         Settings
       </Link>
     )
   }
   return (
-    <div className="rounded-xl border border-sidebar-border bg-sidebar-accent/40 p-3 text-xs text-sidebar-foreground/70">
-      <p className="font-medium text-sidebar-foreground">{STATIC_DEMO ? 'Read-only demo' : 'Read-only view'}</p>
+    <div className="rounded-3xl bg-tone-sun p-4 text-sm text-tone-sun-ink">
+      <p className="font-extrabold">{STATIC_DEMO ? 'Read-only demo' : 'Read-only view'}</p>
       <p className="mt-1">
         {STATIC_DEMO ? 'Sample data for a made-up community.' : 'Committee members can sign in to make changes.'}
       </p>
@@ -113,9 +110,9 @@ function currentTitle(pathname: string) {
 export function AppShell({ children, live }: { children: React.ReactNode; live: LiveData }) {
   const pathname = usePathname()
   return (
-    <div className="min-h-dvh bg-background lg:grid lg:grid-cols-[17rem_1fr]">
+    <div className="min-h-dvh bg-background lg:grid lg:grid-cols-[18rem_1fr]">
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-dvh flex-col gap-6 border-r border-sidebar-border bg-sidebar px-3 py-5 lg:flex">
+      <aside className="sticky top-0 hidden h-dvh flex-col gap-7 border-r border-sidebar-border bg-sidebar px-4 py-6 lg:flex">
         <Link href="/" className="px-2">
           <Brand />
         </Link>
@@ -127,7 +124,7 @@ export function AppShell({ children, live }: { children: React.ReactNode; live: 
 
       <div className="flex min-w-0 flex-col">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border/70 bg-background/70 px-4 backdrop-blur-xl backdrop-saturate-150 lg:px-8">
+        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 bg-background px-4 lg:px-10">
           <div className="lg:hidden">
             <Sheet>
               <SheetTrigger
@@ -155,8 +152,8 @@ export function AppShell({ children, live }: { children: React.ReactNode; live: 
           </div>
 
           <p className="hidden text-sm text-muted-foreground lg:block">
-            {society.shortName} <span className="px-1.5 text-border">/</span>
-            <span className="font-medium text-foreground">{currentTitle(pathname)}</span>
+            {society.shortName} <span className="px-1.5">/</span>
+            <span className="font-bold text-foreground">{currentTitle(pathname)}</span>
           </p>
 
           <div className="ml-auto flex items-center gap-1">
@@ -168,7 +165,7 @@ export function AppShell({ children, live }: { children: React.ReactNode; live: 
         </header>
 
         {/* Page content */}
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-28 lg:px-8 lg:pt-8 lg:pb-12">{children}</main>
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-28 lg:px-10 lg:pt-8 lg:pb-16">{children}</main>
       </div>
 
       {/* Mobile bottom navigation */}
@@ -183,7 +180,7 @@ function MobileTabBar() {
   const rest = navItems.filter((i) => !mobilePrimaryHrefs.includes(i.href))
   const moreActive = rest.some((i) => i.href === pathname)
   return (
-    <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-2xl border border-border/70 bg-background/80 p-1 shadow-lg backdrop-blur-xl backdrop-saturate-150 lg:hidden">
+    <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-3xl border border-border bg-card/95 p-1.5 shadow-lg backdrop-blur-xl lg:hidden">
       {primary.map((item) => {
         const active = pathname === item.href
         const Icon = item.icon
@@ -193,8 +190,8 @@ function MobileTabBar() {
             href={item.href}
             aria-current={active ? 'page' : undefined}
             className={cn(
-              'flex flex-col items-center gap-0.5 rounded-xl py-2 text-[11px] font-medium transition-colors',
-              active ? 'bg-primary/10 text-primary' : 'text-muted-foreground',
+              'flex flex-col items-center gap-0.5 rounded-2xl py-2 text-xs font-semibold transition-colors duration-120 ease-out',
+              active ? 'bg-primary text-primary-foreground' : 'text-muted-foreground',
             )}
           >
             <Icon className="size-5" />
@@ -207,8 +204,8 @@ function MobileTabBar() {
           render={
             <button
               className={cn(
-                'flex flex-col items-center gap-0.5 rounded-xl py-2 text-[11px] font-medium',
-                moreActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground',
+                'flex flex-col items-center gap-0.5 rounded-2xl py-2 text-xs font-semibold',
+                moreActive ? 'bg-primary text-primary-foreground' : 'text-muted-foreground',
               )}
               aria-label="More sections"
             >
@@ -229,7 +226,7 @@ function MobileTabBar() {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'flex flex-col items-center gap-2 rounded-2xl border p-3.5 text-center text-xs font-medium transition-colors',
+                      'flex flex-col items-center gap-2 rounded-2xl border p-3.5 text-center text-xs font-semibold transition-colors',
                       active ? 'border-primary/40 bg-primary/10 text-primary' : 'border-border bg-card hover:bg-muted',
                     )}
                   >

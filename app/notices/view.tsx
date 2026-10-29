@@ -20,6 +20,8 @@ import { society } from '@/society/config'
 
 const fmt = (d: string) => new Date(d).toLocaleDateString(society.locale, { day: 'numeric', month: 'short', year: 'numeric' })
 const categories: Notice['category'][] = ['General', 'Maintenance', 'Event', 'Security', 'Urgent']
+const toneFor = (c: Notice['category']) =>
+  c === 'Urgent' ? 'coral' : c === 'Event' ? 'sun' : c === 'Maintenance' ? 'sky' : c === 'Security' ? 'coral' : 'mint'
 
 function NewNotice() {
   const [open, setOpen] = useState(false)
@@ -95,49 +97,68 @@ export function NoticesView({ items }: { items: Notice[] }) {
   const { pending, run } = useAction()
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-6">
       <div className="flex justify-end">
         {canEdit ? <NewNotice /> : <ReadOnlyNote action="publish notices" />}
       </div>
-      <div className="flex flex-col gap-3">
-        {items.map((n) => (
-          <Card key={n.id}>
-            <CardContent className="flex flex-col gap-2 p-5">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge variant={n.category === 'Urgent' ? 'destructive' : 'secondary'}>{n.category}</Badge>
-                <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  {n.audience === 'all' ? <Users className="size-3.5" aria-hidden /> : <MapPin className="size-3.5" aria-hidden />}
-                  {n.audienceLabel}
-                </span>
-                <span className="text-xs text-muted-foreground">· {fmt(n.date)}</span>
-                {canEdit && (
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    className="ml-auto"
-                    aria-label={`Delete notice: ${n.title}`}
-                    disabled={pending}
-                    onClick={() => confirm(`Delete "${n.title}"?`) && run(() => deleteNotice(n.id))}
+      <Card className="py-0">
+        <CardContent className="p-0">
+          <ul className="divide-y divide-border">
+            {items.map((n) => {
+              const d = new Date(n.date)
+              return (
+                <li key={n.id} className="flex gap-4 px-5 py-6 sm:gap-5 sm:px-6">
+                  <div
+                    className={`flex size-16 shrink-0 flex-col items-center justify-center rounded-2xl ${
+                      n.category === 'Urgent' ? 'bg-tone-coral text-tone-coral-ink' : 'bg-accent text-accent-foreground'
+                    }`}
+                    aria-hidden
                   >
-                    <Trash2 />
-                  </Button>
-                )}
-              </div>
-              <p className="font-medium">{n.title}</p>
-              <p className="text-sm leading-relaxed text-muted-foreground">{n.body}</p>
-              {n.attachments.length > 0 && (
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {n.attachments.map((a) => (
-                    <span key={a} className="flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-xs">
-                      <Paperclip className="size-3" aria-hidden />{a}
+                    <span className="tabular text-2xl font-extrabold leading-none">
+                      {d.toLocaleDateString(society.locale, { day: 'numeric' })}
                     </span>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                    <span className="text-xs font-bold">{d.toLocaleDateString(society.locale, { month: 'short' })}</span>
+                  </div>
+
+                  <div className="flex min-w-0 flex-1 flex-col gap-2">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                      <Badge variant={toneFor(n.category)}>{n.category}</Badge>
+                      <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                        {n.audience === 'all' ? <Users className="size-4" aria-hidden /> : <MapPin className="size-4" aria-hidden />}
+                        {n.audienceLabel}
+                      </span>
+                      <span className="text-sm text-muted-foreground">{fmt(n.date)}</span>
+                      {canEdit && (
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          className="ml-auto"
+                          aria-label={`Delete notice: ${n.title}`}
+                          disabled={pending}
+                          onClick={() => confirm(`Delete "${n.title}"?`) && run(() => deleteNotice(n.id))}
+                        >
+                          <Trash2 />
+                        </Button>
+                      )}
+                    </div>
+                    <p className="text-lg font-bold leading-snug">{n.title}</p>
+                    <p className="max-w-prose text-[0.9375rem] leading-relaxed text-muted-foreground">{n.body}</p>
+                    {n.attachments.length > 0 && (
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {n.attachments.map((a) => (
+                          <span key={a} className="flex items-center gap-1.5 rounded-full bg-muted px-3 py-1.5 text-sm font-semibold">
+                            <Paperclip className="size-4 text-primary" aria-hidden />{a}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        </CardContent>
+      </Card>
     </div>
   )
 }

@@ -30,10 +30,14 @@ export function RecordPayment({ record }: { record: MaintenanceRecord }) {
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle>Record payment</DialogTitle>
-          <DialogDescription>
-            {record.owner} · {society.terms.unit} {record.plotNo}, {society.terms.block} {record.road} · {money(record.dueAmount)} due
+          <DialogDescription className="text-[0.9375rem]">
+            {record.owner}: {society.terms.unit} {record.plotNo}, {society.terms.block} {record.road}.
           </DialogDescription>
         </DialogHeader>
+        <div className="flex items-baseline gap-2 rounded-2xl bg-tone-coral px-4 py-3 text-tone-coral-ink">
+          <span className="tabular text-3xl font-extrabold tracking-tight">{money(record.dueAmount)}</span>
+          <span className="font-bold">due</span>
+        </div>
         <form
           className="flex flex-col gap-4"
           onSubmit={(e) => {
@@ -43,7 +47,7 @@ export function RecordPayment({ record }: { record: MaintenanceRecord }) {
         >
           <div className="flex flex-col gap-1.5">
             <Label htmlFor={`amt-${record.plotNo}`}>Amount (₹)</Label>
-            <Input id={`amt-${record.plotNo}`} type="number" min={1} max={record.dueAmount} required value={amount} onChange={(e) => setAmount(e.target.value)} />
+            <Input id={`amt-${record.plotNo}`} className="tabular text-lg font-bold" type="number" min={1} max={record.dueAmount} required value={amount} onChange={(e) => setAmount(e.target.value)} />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label>Mode</Label>
@@ -52,7 +56,7 @@ export function RecordPayment({ record }: { record: MaintenanceRecord }) {
               <SelectContent>{modes.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
             </Select>
           </div>
-          <p className="text-xs text-muted-foreground">This also adds an income entry to the Accounting ledger.</p>
+          <p className="rounded-2xl bg-muted px-4 py-3 text-sm text-muted-foreground">This also adds an income entry to the Accounting ledger.</p>
           <DialogFooter><Button type="submit" disabled={pending}>Save payment</Button></DialogFooter>
         </form>
       </DialogContent>

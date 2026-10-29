@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import { Trash2, Waves, Cctv, Zap, TrafficCone, Plus, CalendarClock, MapPin, UserRound } from 'lucide-react'
+import { Trash2, Waves, Cctv, Zap, TrafficCone, Plus, CalendarClock, MapPin, UserRound, SearchX } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
@@ -51,14 +51,20 @@ const statusLabel: Record<ServiceRequest['status'], string> = {
   resolved: 'Resolved',
 }
 
-const statusVariant: Record<ServiceRequest['status'], 'default' | 'secondary' | 'outline'> = {
-  open: 'default',
-  'in-progress': 'secondary',
-  resolved: 'outline',
+const statusVariant: Record<ServiceRequest['status'], 'sky' | 'sun' | 'mint'> = {
+  open: 'sky',
+  'in-progress': 'sun',
+  resolved: 'mint',
 }
 
-const priorityVariant: Record<ServiceRequest['priority'], 'destructive' | 'secondary' | 'outline'> = {
-  high: 'destructive',
+const statusWell: Record<ServiceRequest['status'], string> = {
+  open: 'bg-tone-sky text-tone-sky-ink',
+  'in-progress': 'bg-tone-sun text-tone-sun-ink',
+  resolved: 'bg-tone-mint text-tone-mint-ink',
+}
+
+const priorityVariant: Record<ServiceRequest['priority'], 'coral' | 'secondary' | 'outline'> = {
+  high: 'coral',
   medium: 'secondary',
   low: 'outline',
 }
@@ -108,21 +114,21 @@ function TicketCard({ req, canEdit }: { req: ServiceRequest; canEdit: boolean })
   const cat = requestCategories.find((c) => c.id === req.category)
   const Icon = (cat && icons[cat.icon]) || Zap
   return (
-    <Card>
-      <CardContent className="flex flex-col gap-3 p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex min-w-0 items-start gap-3">
-            <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-              <Icon className="size-4" aria-hidden />
-            </span>
-            <div className="min-w-0">
-              <p className="text-xs text-muted-foreground">
-                {req.ticketNo} · {categoryLabel(req.category)}
-              </p>
-              <p className="font-medium leading-snug text-balance">{req.title}</p>
-            </div>
+    <li className="flex gap-4 px-5 py-6 sm:gap-5 sm:px-6">
+      <span className={`flex size-12 shrink-0 items-center justify-center rounded-full ${statusWell[req.status]}`}>
+        <Icon className="size-5" aria-hidden />
+      </span>
+
+      <div className="flex min-w-0 flex-1 flex-col gap-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+          <div className="min-w-0">
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm text-muted-foreground">
+              <span className="tabular font-bold text-foreground">{req.ticketNo}</span>
+              <span>{categoryLabel(req.category)}</span>
+            </p>
+            <p className="mt-0.5 text-lg font-bold leading-snug text-balance">{req.title}</p>
           </div>
-          <div className="flex shrink-0 flex-col items-end gap-1.5">
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
             <Badge variant={statusVariant[req.status]}>{statusLabel[req.status]}</Badge>
             <Badge variant={priorityVariant[req.priority]} className="capitalize">
               {req.priority}
@@ -130,46 +136,48 @@ function TicketCard({ req, canEdit }: { req: ServiceRequest; canEdit: boolean })
           </div>
         </div>
 
-        <p className="text-sm leading-relaxed text-muted-foreground">{req.description}</p>
+        <p className="max-w-prose text-[0.9375rem] leading-relaxed text-muted-foreground">{req.description}</p>
 
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+        <div className="flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-muted-foreground">
           <span className="flex items-center gap-1.5">
-            <MapPin className="size-3.5" aria-hidden />
+            <MapPin className="size-4" aria-hidden />
             {society.terms.unit} {req.plotNo}, {society.terms.block} {req.road}
           </span>
           <span className="flex items-center gap-1.5">
-            <UserRound className="size-3.5" aria-hidden />
+            <UserRound className="size-4" aria-hidden />
             {req.raisedBy}
           </span>
           <span className="flex items-center gap-1.5">
-            <CalendarClock className="size-3.5" aria-hidden />
+            <CalendarClock className="size-4" aria-hidden />
             {fmtDate(req.raisedOn)}
           </span>
         </div>
 
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-sm">
-            {req.assignedTo && (
-              <>
-                <span className="text-muted-foreground">Assigned to: </span>
-                {req.assignedTo}
-              </>
-            )}
-          </p>
-          {canEdit && <UpdateDialog req={req} />}
-        </div>
+        <div className="flex flex-col gap-3 rounded-2xl bg-muted p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-[0.9375rem]">
+              {req.assignedTo && (
+                <>
+                  <span className="text-muted-foreground">Assigned to: </span>
+                  <span className="font-bold">{req.assignedTo}</span>
+                </>
+              )}
+            </p>
+            {canEdit && <UpdateDialog req={req} />}
+          </div>
 
-        <ol className="flex flex-col gap-2 border-l pl-4">
-          {req.updates.map((u, i) => (
-            <li key={i} className="relative text-sm">
-              <span className="absolute top-1.5 -left-[1.28rem] size-2 rounded-full bg-primary" aria-hidden />
-              <span className="text-xs text-muted-foreground">{fmtDate(u.on)}</span>
-              <p>{u.note}</p>
-            </li>
-          ))}
-        </ol>
-      </CardContent>
-    </Card>
+          <ol className="flex flex-col gap-3 border-l-2 border-border pl-4">
+            {req.updates.map((u, i) => (
+              <li key={i} className="relative text-[0.9375rem]">
+                <span className="absolute top-1.5 -left-[1.4rem] size-2.5 rounded-full bg-primary" aria-hidden />
+                <span className="text-sm font-semibold text-muted-foreground">{fmtDate(u.on)}</span>
+                <p className="leading-relaxed">{u.note}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </li>
   )
 }
 
@@ -307,17 +315,15 @@ export function RequestsView({ items }: { items: ServiceRequest[] }) {
   )
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="grid grid-cols-3 gap-3">
+    <div className="flex flex-col gap-6">
+      <dl className="grid grid-cols-3 gap-3 sm:gap-4">
         {(['open', 'in-progress', 'resolved'] as const).map((s) => (
-          <Card key={s}>
-            <CardContent className="p-4">
-              <p className="text-2xl font-semibold">{counts[s]}</p>
-              <p className="text-sm text-muted-foreground">{statusLabel[s]}</p>
-            </CardContent>
-          </Card>
+          <div key={s} className={`flex flex-col gap-1 rounded-3xl px-5 py-4 sm:px-6 sm:py-5 ${statusWell[s]}`}>
+            <dt className="text-sm font-bold sm:text-base">{statusLabel[s]}</dt>
+            <dd className="tabular text-3xl font-extrabold leading-none sm:text-4xl">{counts[s]}</dd>
+          </div>
         ))}
-      </div>
+      </dl>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <Select items={[{ value: 'all', label: 'All categories' }, ...requestCategories.map((c) => ({ value: c.id, label: c.label }))]} value={category} onValueChange={(v) => setCategory(v as 'all' | RequestCategory)}>
@@ -343,12 +349,23 @@ export function RequestsView({ items }: { items: ServiceRequest[] }) {
           <TabsTrigger value="in-progress">In progress</TabsTrigger>
           <TabsTrigger value="resolved">Resolved</TabsTrigger>
         </TabsList>
-        <TabsContent value={tab} className="mt-4 flex flex-col gap-3">
-          {filtered.length === 0 ? (
-            <p className="py-10 text-center text-sm text-muted-foreground">No requests match these filters.</p>
-          ) : (
-            filtered.map((r) => <TicketCard key={r.id} req={r} canEdit={canEdit} />)
-          )}
+        <TabsContent value={tab} className="mt-5">
+          <Card className="py-0">
+            <CardContent className="p-0">
+              {filtered.length === 0 ? (
+                <div className="flex flex-col items-center gap-3 px-6 py-14 text-center">
+                  <span className="flex size-14 items-center justify-center rounded-full bg-tone-sky text-tone-sky-ink">
+                    <SearchX className="size-6" aria-hidden />
+                  </span>
+                  <p className="text-base text-muted-foreground">No requests match these filters.</p>
+                </div>
+              ) : (
+                <ul className="divide-y divide-border">
+                  {filtered.map((r) => <TicketCard key={r.id} req={r} canEdit={canEdit} />)}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

@@ -1,3 +1,9 @@
+/* Hallmark · shape: app screen · genre: playful · theme: hum (lent: warm paper, rounded face, soft stock controls) + brand (teal, marigold) · redesign: full
+ * paper: oklch(0.972 0.016 88) · accent: oklch(0.8 0.128 78) · display: Nunito · body: Nunito
+ * nav: kept sidebar, rounded pills · signature: the resident's front page, what is on this week first · states: loading, empty, full
+ * axes: cream/rounded-sans/marigold · posture: restrained · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V4 · weakest: S, the stat strip was four icon tiles; made it one hairline-divided figure well and led with the meeting and notices *//* Hallmark · dismissed 29 · the blur sits on the dialog and sheet scrim only, a modal overlay and not a glass surface behind text */
+
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
@@ -5,9 +11,20 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-nunito), ui-rounded, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-nunito), ui-rounded, ui-sans-serif, system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-tone-sun: var(--tone-sun);
+  --color-tone-sun-ink: var(--tone-sun-ink);
+  --color-tone-mint: var(--tone-mint);
+  --color-tone-mint-ink: var(--tone-mint-ink);
+  --color-tone-coral: var(--tone-coral);
+  --color-tone-coral-ink: var(--tone-coral-ink);
+  --color-tone-sky: var(--tone-sky);
+  --color-tone-sky-ink: var(--tone-sky-ink);
+  --color-welcome: var(--welcome);
+  --color-welcome-foreground: var(--welcome-foreground);
+  --color-welcome-muted: var(--welcome-muted);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-accent: var(--sidebar-accent);
@@ -49,42 +66,60 @@
 
 :root {
   color-scheme: light;
-  --background: oklch(0.985 0.006 95);
-  --foreground: oklch(0.24 0.02 175);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.24 0.02 175);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.24 0.02 175);
-  --primary: oklch(0.46 0.062 172);
-  --primary-foreground: oklch(0.985 0.01 95);
-  --secondary: oklch(0.95 0.012 160);
+  --background: oklch(0.972 0.016 88);
+  --foreground: oklch(0.26 0.03 185);
+  --card: oklch(0.99 0.008 90);
+  --card-foreground: oklch(0.26 0.03 185);
+  --popover: oklch(0.99 0.008 90);
+  --popover-foreground: oklch(0.26 0.03 185);
+  --primary: oklch(0.47 0.07 175);
+  --primary-edge: oklch(0.35 0.06 176);
+  --primary-foreground: oklch(0.985 0.012 92);
+  --secondary: oklch(0.94 0.03 165);
   --secondary-foreground: oklch(0.34 0.04 172);
-  --muted: oklch(0.955 0.008 120);
-  --muted-foreground: oklch(0.52 0.02 170);
+  --muted: oklch(0.945 0.018 88);
+  --muted-foreground: oklch(0.47 0.03 178);
   --accent: oklch(0.8 0.128 78);
   --accent-foreground: oklch(0.3 0.05 70);
   --destructive: oklch(0.55 0.2 27);
-  --border: oklch(0.9 0.012 150);
-  --input: oklch(0.9 0.012 150);
+  --border: oklch(0.89 0.022 88);
+  --input: oklch(0.86 0.025 88);
   --ring: oklch(0.46 0.062 172);
   --chart-1: oklch(0.46 0.062 172);
   --chart-2: oklch(0.8 0.128 78);
   --chart-3: oklch(0.6 0.07 200);
   --chart-4: oklch(0.68 0.1 130);
   --chart-5: oklch(0.55 0.13 40);
-  --radius: 0.875rem;
-  --sidebar: oklch(0.28 0.028 174);
-  --sidebar-foreground: oklch(0.92 0.015 120);
-  --sidebar-primary: oklch(0.8 0.128 78);
-  --sidebar-primary-foreground: oklch(0.24 0.03 172);
-  --sidebar-accent: oklch(0.34 0.035 174);
-  --sidebar-accent-foreground: oklch(0.96 0.01 95);
-  --sidebar-border: oklch(0.36 0.03 174);
-  --sidebar-ring: oklch(0.8 0.128 78);
+  --radius: 1.25rem;
+  --paper-tint: oklch(0.95 0.03 88);
+  --shadow-card: 0 1px 2px oklch(0.3 0.04 180 / 6%), 0 10px 24px -14px oklch(0.3 0.04 180 / 22%);
+  --shadow-card-hover: 0 1px 2px oklch(0.3 0.04 180 / 8%), 0 16px 32px -14px oklch(0.3 0.04 180 / 28%);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --sidebar: oklch(0.95 0.022 86);
+  --sidebar-foreground: oklch(0.28 0.03 185);
+  --sidebar-primary: oklch(0.47 0.07 175);
+  --sidebar-primary-foreground: oklch(0.985 0.012 92);
+  --sidebar-accent: oklch(0.915 0.03 86);
+  --sidebar-accent-foreground: oklch(0.26 0.03 185);
+  --sidebar-border: oklch(0.89 0.022 88);
+  --sidebar-ring: oklch(0.46 0.062 172);
+  --tone-sun: oklch(0.93 0.07 88);
+  --tone-sun-ink: oklch(0.38 0.07 70);
+  --tone-mint: oklch(0.93 0.05 165);
+  --tone-mint-ink: oklch(0.36 0.06 170);
+  --tone-coral: oklch(0.92 0.045 35);
+  --tone-coral-ink: oklch(0.42 0.12 30);
+  --tone-sky: oklch(0.93 0.035 230);
+  --tone-sky-ink: oklch(0.38 0.08 240);
+  --welcome: oklch(0.4 0.065 178);
+  --welcome-foreground: oklch(0.97 0.018 90);
+  --welcome-muted: oklch(0.86 0.035 150);
 }
 
 /* Dark theme: deep teal-slate surfaces that keep the civic teal + marigold identity. */
-.dark {
+:root[data-theme='dark'] {
   color-scheme: dark;
   --background: oklch(0.17 0.012 190);
   --foreground: oklch(0.95 0.008 120);
@@ -93,6 +128,7 @@
   --popover: oklch(0.23 0.015 188);
   --popover-foreground: oklch(0.95 0.008 120);
   --primary: oklch(0.72 0.1 170);
+  --primary-edge: oklch(0.55 0.09 172);
   --primary-foreground: oklch(0.17 0.02 180);
   --secondary: oklch(0.27 0.02 180);
   --secondary-foreground: oklch(0.9 0.02 160);
@@ -117,22 +153,44 @@
   --sidebar-accent-foreground: oklch(0.96 0.01 95);
   --sidebar-border: oklch(1 0 0 / 8%);
   --sidebar-ring: oklch(0.8 0.128 78);
+  --tone-sun: oklch(0.32 0.06 80);
+  --tone-sun-ink: oklch(0.9 0.09 88);
+  --tone-mint: oklch(0.3 0.045 170);
+  --tone-mint-ink: oklch(0.88 0.06 165);
+  --tone-coral: oklch(0.31 0.05 32);
+  --tone-coral-ink: oklch(0.88 0.06 35);
+  --tone-sky: oklch(0.3 0.04 235);
+  --tone-sky-ink: oklch(0.88 0.04 230);
+  --welcome: oklch(0.27 0.04 180);
+  --welcome-foreground: oklch(0.96 0.015 90);
+  --welcome-muted: oklch(0.8 0.03 160);
 }
 
-/* Modern surface details shared by both themes. */
+/* One containment layer: a soft shadow on light, a hairline on dark. */
 @layer components {
   [data-slot='card'] {
-    box-shadow: 0 1px 2px oklch(0 0 0 / 4%), 0 4px 16px -6px oklch(0 0 0 / 8%);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow var(--dur-short) var(--ease-out);
   }
   .dark [data-slot='card'] {
-    box-shadow: 0 1px 0 oklch(1 0 0 / 4%) inset, 0 8px 24px -12px oklch(0 0 0 / 60%);
+    box-shadow: none;
+    border: 1px solid var(--border);
   }
-  [data-slot='card']:hover {
-    box-shadow: 0 1px 2px oklch(0 0 0 / 5%), 0 10px 28px -10px oklch(0 0 0 / 14%);
+  a:hover > [data-slot='card'],
+  [data-slot='card'][data-interactive]:hover {
+    box-shadow: var(--shadow-card-hover);
   }
-  .dark [data-slot='card']:hover {
-    box-shadow: 0 1px 0 oklch(1 0 0 / 6%) inset, 0 12px 32px -12px oklch(0 0 0 / 70%);
+  .dark a:hover > [data-slot='card'] {
+    border-color: var(--ring);
+  }
+  .press {
+    box-shadow: 0 3px 0 var(--primary-edge);
+    transition: box-shadow var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+  }
+  .press:hover { transform: translateY(-1px); box-shadow: 0 4px 0 var(--primary-edge); }
+  .press:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--primary-edge); }
+  .marker {
+    background: linear-gradient(transparent 58%, color-mix(in oklch, var(--accent) 55%, transparent) 58%);
   }
 }
 
@@ -140,11 +198,42 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    scrollbar-color: var(--muted-foreground) var(--background);
+  }
+  html, body {
+    overflow-x: clip;
+  }
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-foreground);
+  }
+  :disabled {
+    cursor: not-allowed;
+  }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: 'ss01', 'cv11';
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
   }
   h1, h2, h3 {
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    overflow-wrap: break-word;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  [data-slot='card-title'] {
+    font-weight: 700;
+  }
+  .tabular, td, [data-figure] {
+    font-variant-numeric: tabular-nums;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }

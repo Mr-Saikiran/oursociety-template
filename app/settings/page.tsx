@@ -5,6 +5,8 @@ import { getCurrentUser } from '@/lib/auth'
 import { readUsers, toPublic } from '@/lib/users'
 import { STATIC_DEMO } from '@/lib/static'
 import { DemoNotice } from '@/components/demo-notice'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { AddMemberForm, ChangePasswordForm, MembersTable } from './settings-view'
 
 export const metadata: Metadata = { title: 'Settings' }
@@ -16,7 +18,7 @@ export default async function SettingsPage() {
   const members = me.role === 'admin' ? (await readUsers()).map(toPublic) : []
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="mx-auto max-w-4xl">
       <PageHeader
         title="Settings"
         description={
@@ -26,28 +28,43 @@ export default async function SettingsPage() {
         }
       />
 
-      {me.role === 'admin' && (
-        <section className="flex flex-col gap-4">
-          <div>
-            <h2 className="text-lg font-semibold tracking-tight">Members with edit access</h2>
-            <p className="text-sm text-muted-foreground">
-              Admins manage members and settings. Editors can update notices, requests, visitors, bills and accounts.
-            </p>
-          </div>
-          <MembersTable members={members} meId={me.id} />
-          <AddMemberForm />
-        </section>
-      )}
+      <div className="flex flex-col gap-6">
+        {me.role === 'admin' && (
+          <Card>
+            <CardHeader className="gap-1.5">
+              <CardTitle className="text-xl"><h2>Members with edit access</h2></CardTitle>
+              <CardDescription className="max-w-prose text-[0.9375rem] leading-relaxed">
+                Admins manage members and settings. Editors can update notices, requests, visitors, bills and accounts.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-6">
+              <MembersTable members={members} meId={me.id} />
+              <AddMemberForm />
+            </CardContent>
+          </Card>
+        )}
 
-      <section className="flex flex-col gap-4">
-        <div>
-          <h2 className="text-lg font-semibold tracking-tight">Your account</h2>
-          <p className="text-sm text-muted-foreground">
-            {me.name} · {me.email} · <span className="capitalize">{me.role}</span>
-          </p>
-        </div>
-        <ChangePasswordForm />
-      </section>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl"><h2>Your account</h2></CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-6">
+            <div className="flex items-center gap-4">
+              <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-tone-mint text-base font-extrabold text-tone-mint-ink" aria-hidden>
+                {me.name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase()}
+              </span>
+              <div className="min-w-0">
+                <p className="flex flex-wrap items-center gap-2 text-lg font-bold leading-snug">
+                  {me.name}
+                  <Badge variant="sky" className="capitalize">{me.role}</Badge>
+                </p>
+                <p className="truncate text-[0.9375rem] text-muted-foreground">{me.email}</p>
+              </div>
+            </div>
+            <ChangePasswordForm />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

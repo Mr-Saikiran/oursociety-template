@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default async function Page() {
   const items = await all('visitors')
   return (
-    <div>
+    <div className="mx-auto max-w-6xl">
       <PageHeader title="Visitor Management" description="Verify every visitor with residents before they enter the premises." />
       <VisitorsView items={items} />
     </div>

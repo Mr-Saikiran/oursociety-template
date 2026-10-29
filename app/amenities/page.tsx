@@ -31,39 +31,63 @@ const categoryIcon: Record<string, typeof Trees> = {
   Security: Cctv,
 }
 
+/* Each category wears one soft tone, so the grid reads at a glance. */
+const categoryTone: Record<string, 'sun' | 'mint' | 'coral' | 'sky'> = {
+  Common: 'sun',
+  Park: 'mint',
+  Sports: 'coral',
+  Spiritual: 'sun',
+  Security: 'sky',
+}
+
+const toneWell = {
+  sun: 'bg-tone-sun text-tone-sun-ink',
+  mint: 'bg-tone-mint text-tone-mint-ink',
+  coral: 'bg-tone-coral text-tone-coral-ink',
+  sky: 'bg-tone-sky text-tone-sky-ink',
+}
+
 const statusMeta = {
-  available: { label: 'Available', variant: 'secondary' as const },
-  maintenance: { label: 'Under maintenance', variant: 'outline' as const },
-  planned: { label: 'Planned', variant: 'outline' as const },
+  available: { label: 'Available', variant: 'mint' as const },
+  maintenance: { label: 'Under maintenance', variant: 'sun' as const },
+  planned: { label: 'Planned', variant: 'sky' as const },
 }
 
 function AmenityCard({ a }: { a: Amenity }) {
   const Icon = categoryIcon[a.category] ?? Sparkles
   const meta = statusMeta[a.status]
+  const tone = categoryTone[a.category] ?? 'mint'
   return (
-    <Card className="flex flex-col">
-      <CardContent className="flex flex-1 flex-col gap-3 p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex size-11 items-center justify-center rounded-xl bg-secondary text-primary">
-            <Icon className="size-5" />
+    <Card className="flex flex-col py-0">
+      <CardContent className="flex flex-1 flex-col gap-4 p-3">
+        <div className={`flex items-center gap-4 rounded-2xl p-5 ${toneWell[tone]}`}>
+          <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-card/70" aria-hidden>
+            <Icon className="size-7" />
+          </span>
+          <span className="text-base font-bold">{a.category}</span>
+        </div>
+        <div className="flex flex-1 flex-col gap-3 px-3 pb-3">
+          <div>
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-lg font-bold leading-snug">{a.name}</p>
+              <Badge variant={meta.variant} className="mt-0.5">{meta.label}</Badge>
+            </div>
+            <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+              <MapPin className="size-4 shrink-0" aria-hidden />{a.location}
+            </p>
           </div>
-          <Badge variant={meta.variant}>{meta.label}</Badge>
+          <p className="flex-1 text-[0.9375rem] leading-relaxed text-muted-foreground">{a.description}</p>
+          {a.timings && (
+            <p className="flex w-fit items-center gap-2 rounded-full bg-muted px-3.5 py-1.5 text-sm font-semibold text-foreground">
+              <Clock className="size-4 text-primary" aria-hidden />{a.timings}
+            </p>
+          )}
+          {a.bookable && a.status !== 'planned' && (
+            <div className="pt-1">
+              <BookingButton amenity={a.name} />
+            </div>
+          )}
         </div>
-        <div>
-          <p className="font-medium leading-snug">{a.name}</p>
-          <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-            <MapPin className="size-3" />{a.location}
-          </p>
-        </div>
-        <p className="flex-1 text-sm leading-relaxed text-muted-foreground">{a.description}</p>
-        {a.timings && (
-          <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <Clock className="size-3.5" />{a.timings}
-          </p>
-        )}
-        {a.bookable && a.status !== 'planned' && (
-          <BookingButton amenity={a.name} />
-        )}
       </CardContent>
     </Card>
   )
@@ -76,14 +100,14 @@ export default async function AmenitiesPage() {
     <div className="mx-auto max-w-6xl">
       <PageHeader
         title="Amenities"
-        description="Facilities maintained by the association for residents — community hall, parks, sports areas and 24x7 security."
+        description="Facilities maintained by the association for residents: community hall, parks, sports areas and 24x7 security."
       />
-      <div className="mb-5 flex flex-wrap gap-2">
+      <div className="mb-6 flex flex-wrap gap-2">
         {categories.map((c) => (
-          <Badge key={c} variant="secondary">{c}</Badge>
+          <Badge key={c} variant={categoryTone[c] ?? 'mint'} className="h-8 px-3.5 text-sm">{c}</Badge>
         ))}
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {amenities.map((a) => (
           <AmenityCard key={a.id} a={a} />
         ))}

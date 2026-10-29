@@ -11,7 +11,7 @@ import { login, setupAdmin } from '@/app/actions/auth'
 function FormError({ message }: { message?: string }) {
   if (!message) return null
   return (
-    <p role="alert" className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+    <p role="alert" className="rounded-2xl bg-tone-coral px-4 py-3 text-sm font-semibold text-tone-coral-ink">
       {message}
     </p>
   )
@@ -19,7 +19,7 @@ function FormError({ message }: { message?: string }) {
 
 function Field({ id, label, ...props }: { id: string; label: string } & React.ComponentProps<typeof Input>) {
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <Label htmlFor={id}>{label}</Label>
       <Input id={id} name={id} required {...props} />
     </div>
@@ -29,15 +29,15 @@ function Field({ id, label, ...props }: { id: string; label: string } & React.Co
 export function LoginForm({ next }: { next: string }) {
   const [state, action, pending] = useActionState(login, undefined)
   return (
-    <Card>
-      <CardContent className="p-5">
-        <form action={action} className="flex flex-col gap-4">
+    <Card className="py-0">
+      <CardContent className="p-6 sm:p-8">
+        <form action={action} className="flex flex-col gap-5">
           <input type="hidden" name="next" value={next} />
           <Field id="email" label="Email" type="email" autoComplete="email" />
           <Field id="password" label="Password" type="password" autoComplete="current-password" />
           <FormError message={state?.error} />
-          <Button type="submit" disabled={pending}>
-            {pending && <Loader2 className="animate-spin" data-icon="inline-start" />}
+          <Button type="submit" size="lg" className="mt-1 w-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring" disabled={pending}>
+            {pending && <Loader2 className="animate-spin motion-reduce:animate-none" data-icon="inline-start" />}
             Sign in
           </Button>
         </form>
@@ -49,16 +49,18 @@ export function LoginForm({ next }: { next: string }) {
 export function SetupForm() {
   const [state, action, pending] = useActionState(setupAdmin, undefined)
   return (
-    <Card>
-      <CardContent className="p-5">
-        <form action={action} className="flex flex-col gap-4">
-          <Field id="setupCode" label="Setup code" autoComplete="off" />
+    <Card className="py-0">
+      <CardContent className="p-6 sm:p-8">
+        <form action={action} className="flex flex-col gap-5">
+          <div className="rounded-2xl bg-muted p-4">
+            <Field id="setupCode" label="Setup code" autoComplete="off" />
+          </div>
           <Field id="name" label="Your name" autoComplete="name" />
           <Field id="email" label="Email" type="email" autoComplete="email" />
           <Field id="password" label="Password (8+ characters)" type="password" minLength={8} autoComplete="new-password" />
           <FormError message={state?.error} />
-          <Button type="submit" disabled={pending}>
-            {pending && <Loader2 className="animate-spin" data-icon="inline-start" />}
+          <Button type="submit" size="lg" className="mt-1 w-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring" disabled={pending}>
+            {pending && <Loader2 className="animate-spin motion-reduce:animate-none" data-icon="inline-start" />}
             Create admin account
           </Button>
         </form>
